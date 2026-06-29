@@ -78,7 +78,7 @@ class CartController extends Controller
         if($already_cart) {
             $already_cart->quantity = $already_cart->quantity + $request->quant[1];
             // $already_cart->price = ($product->price * $request->quant[1]) + $already_cart->price ;
-            $already_cart->amount = ($product->price * $request->quant[1])+ $already_cart->amount;
+            $already_cart->amount = (($product->price-($product->price*$product->discount)/100) * $request->quant[1])+ $already_cart->amount;
 
             if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Không đủ hàng trong kho!.');
 
@@ -92,7 +92,7 @@ class CartController extends Controller
             $cart->product_id = $product->id;
             $cart->price = ($product->price-($product->price*$product->discount)/100);
             $cart->quantity = $request->quant[1];
-            $cart->amount=($product->price * $request->quant[1]);
+            $cart->amount=($product->price-($product->price*$product->discount)/100) * $request->quant[1];
             if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Không đủ hàng trong kho!.');
             // return $cart;
             $cart->save();
