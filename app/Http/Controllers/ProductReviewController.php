@@ -44,8 +44,10 @@ class ProductReviewController extends Controller
             'rate'=>'required|numeric|min:1'
         ]);
         $product_info=Product::getProductBySlug($request->slug);
-        //  return $product_info;
-        // return $request->all();
+        if(!$product_info){
+            request()->session()->flash('error','Sản phẩm không tồn tại!');
+            return redirect()->back();
+        }
         $data=$request->all();
         $data['product_id']=$product_info->id;
         $data['user_id']=$request->user()->id;
@@ -141,6 +143,10 @@ class ProductReviewController extends Controller
     public function destroy($id)
     {
         $review=ProductReview::find($id);
+        if(!$review){
+            request()->session()->flash('error','Không tìm thấy đánh giá!');
+            return redirect()->route('review.index');
+        }
         $status=$review->delete();
         if($status){
             request()->session()->flash('success','Xóa đánh giá thành công');
